@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Prelims_Cipher_Me
 {
     internal class Program
     {
-        static string _aPhabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         static void Main(string[] args)
         {
-            isUserChoice();
+            //isUserChoice();
+
+            NowICipher("John Joshua Delfin".ToUpper());
         }
         static void isUserChoice()
         {
@@ -42,7 +44,6 @@ namespace Prelims_Cipher_Me
             string message = Console.ReadLine();
             Console.ReadKey();
 
-            NowIDecipher(key, message);
         }
         static void EncryptMe()
         {
@@ -56,8 +57,10 @@ namespace Prelims_Cipher_Me
             Console.Write("Enter your message: ");
             string message = Console.ReadLine();
             Console.ReadKey();
-
-            NowICipher(key, message);
+            WriteOutputFile();
+            Console.WriteLine("The encrypted message has been successfully written in the eMessage.txt file.");
+            Console.WriteLine("Press any key to exit the program.");
+            Console.ReadKey();
         }
         static void isValidInput(string uInput)
         {
@@ -69,46 +72,45 @@ namespace Prelims_Cipher_Me
                 isValidInput(uInput);
             }
         }
-        static string NowICipher(string key, string message)
+        static void NowICipher(string key)
         {
-            List<char> finalMes = new List<char>();
-            key = key.ToUpper();
+            List<char> aPhabet = new List<char>() {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+            'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+            List<char> cPhabet = new List<char>() { };
 
-            foreach (char c in message)
+
+            //gets total num of index list
+            for (int i = 0; i < key.Length; i++)
             {
-                if (char.IsLetter(c))
+                //if key not in cPhabet
+                if (aPhabet.Contains(key[i]))
                 {
-                    message.ToUpper();
-                    int index = _aPhabet.IndexOf(message);
-
-                    if (index >= 0)
-                    {
-                        char keyChar = key[c % key.Length];
-                        int keyIndex = _aPhabet.IndexOf(keyChar);
-
-                        char encryptedChar = _aPhabet[(index + keyIndex) % 26];
-
-                        finalMes.Add(encryptedChar);
-                    }
-                }
-                else
-                {
-                    finalMes.Add(c);
+                    cPhabet.Add(key[i]);
+                    aPhabet.Remove(key[i]);
                 }
             }
 
-            string CipheredMes = new string(finalMes.ToArray());
+            //add the remaining letters to the
+            for (int i = 0; i < aPhabet.Count; i++)
+            {
+                cPhabet.Add(aPhabet[i]);
+            }
 
-            return CipheredMes;
+            for (int i = 0; i < cPhabet.Count; i++)
+            {
+                Console.Write(cPhabet[i] + " ");
+            }
+
+
         }
-        static string NowIDecipher(string key, string message)
+        static void WriteOutputFile()
         {
-            return NowICipher(message, key).ToUpper();
+            string fileName = "eMessage.txt";
+
+            using (StreamWriter sr = new StreamWriter(fileName))
+            {
+                sr.WriteLine();
+            }
         }
     }
 }
-
-
-
-
-
