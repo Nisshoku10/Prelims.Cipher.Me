@@ -6,11 +6,11 @@ namespace Prelims_Cipher_Me
 {
     internal class Program
     {
+        static string _mesFromTXT = "";
+
         static void Main(string[] args)
         {
-            //isUserChoice();
-
-            NowICipher("John Joshua Delfin".ToUpper());
+            isUserChoice();
         }
         static void isUserChoice()
         {
@@ -31,20 +31,6 @@ namespace Prelims_Cipher_Me
                 DecryptMe();
             }
         }
-        static void DecryptMe()
-        {
-            Console.Clear();
-            Console.Write("Enter your desired key: ");
-            string key = Console.ReadLine();
-            Console.WriteLine("Cypher has been set.");
-            Console.ReadKey();
-            Console.Clear();
-
-            Console.Write("Enter your message: ");
-            string message = Console.ReadLine();
-            Console.ReadKey();
-
-        }
         static void EncryptMe()
         {
             Console.Clear();
@@ -53,36 +39,47 @@ namespace Prelims_Cipher_Me
             Console.WriteLine("Cypher has been set.");
             Console.ReadKey();
             Console.Clear();
-
             Console.Write("Enter your message: ");
             string message = Console.ReadLine();
             Console.ReadKey();
-            WriteOutputFile();
+            Console.Clear();
+            BuildCphabet(key, message);
             Console.WriteLine("The encrypted message has been successfully written in the eMessage.txt file.");
             Console.WriteLine("Press any key to exit the program.");
             Console.ReadKey();
         }
+        static void DecryptMe()
+        {
+            Console.Clear();
+            Console.Write("Enter your desired key: ");
+            string key = Console.ReadLine();
+            Console.WriteLine("Cypher has been set.");
+            Console.ReadKey();
+            DecryptMyMessage(key);
+            Console.Clear();
+            Console.ReadKey();
+        }
         static void isValidInput(string uInput)
         {
+            Console.Clear();
             if (uInput != "E" && uInput != "D")
             {
                 Console.WriteLine("Your input must only be E for encrypting and D for decrypting.");
-                Console.Write("E / D: ");
+                Console.Write("Enter your choice [E / D]: ");
                 uInput = Console.ReadLine().ToUpper();
                 isValidInput(uInput);
             }
         }
-        static void NowICipher(string key)
+        static void BuildCphabet(string key, string message)
         {
             List<char> aPhabet = new List<char>() {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
             'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
             List<char> cPhabet = new List<char>() { };
 
+            key = key.ToUpper();
 
-            //gets total num of index list
             for (int i = 0; i < key.Length; i++)
             {
-                //if key not in cPhabet
                 if (aPhabet.Contains(key[i]))
                 {
                     cPhabet.Add(key[i]);
@@ -90,26 +87,101 @@ namespace Prelims_Cipher_Me
                 }
             }
 
-            //add the remaining letters to the
             for (int i = 0; i < aPhabet.Count; i++)
             {
                 cPhabet.Add(aPhabet[i]);
             }
 
-            for (int i = 0; i < cPhabet.Count; i++)
+            EncryptMyMessage(message, cPhabet);
+        }
+        static void EncryptMyMessage(string message, List<char> cPhabet)
+        {
+            message = message.ToUpper();
+            string eMessage = "";
+
+            for (int i = 0; i < message.Length; i++)
             {
-                Console.Write(cPhabet[i] + " ");
+                if (char.IsLetter(message[i]))
+                {
+                    int index = message[i] - 65;
+                    eMessage += cPhabet[index];
+                }
+                else
+                {
+                    eMessage += message[i];
+                }
             }
 
-
-        }
-        static void WriteOutputFile()
-        {
-            string fileName = "eMessage.txt";
-
-            using (StreamWriter sr = new StreamWriter(fileName))
+            try
             {
-                sr.WriteLine();
+                WriteOutputFile(eMessage);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("File couldn't be accessed due to the following error: " + ex.Message);
+            }
+        }
+        static void DecryptMyMessage(string key)
+        {
+            List<char> aPhabet = new List<char>() {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+            'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+            List<char> cPhabet = new List<char>() { };
+
+            key = key.ToUpper();
+
+            for (int i = 0; i < key.Length; i++)
+            {
+                if (aPhabet.Contains(key[i]))
+                {
+                    cPhabet.Add(key[i]);
+                    aPhabet.Remove(key[i]);
+                }
+            }
+
+            for (int i = 0; i < aPhabet.Count; i++)
+            {
+                cPhabet.Add(aPhabet[i]);
+            }
+
+            try
+            {
+                ReadOutputFile();
+                string DecryptedMessage = "";
+                for (int i = 0; i < _mesFromTXT.Length; i++)
+                {
+                    if (cPhabet.Contains(_mesFromTXT[i]))
+                    {
+                        int index = cPhabet.IndexOf(_mesFromTXT[i]) + 65;
+                        DecryptedMessage += (char)index;
+                    }
+                    else
+                    {
+                        DecryptedMessage += _mesFromTXT[i];
+                    }
+                }
+                Console.WriteLine("The decrypted message is: ");
+                Console.WriteLine(DecryptedMessage);
+                Console.ReadKey();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("File couldn't be accessed due to the following error: " + ex.Message);
+            }
+        }
+        static void WriteOutputFile(string eMessage)
+        {
+            string _fileName = "eMessage.txt";
+            using (StreamWriter writer = new StreamWriter(_fileName))
+            {
+                writer.WriteLine(eMessage);
+            }
+        }
+        static void ReadOutputFile()
+        {
+            string _fileName = "eMessage.txt";
+            using (StreamReader reader = new StreamReader(_fileName))
+            {
+                _mesFromTXT = reader.ReadToEnd();
             }
         }
     }
