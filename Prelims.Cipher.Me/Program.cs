@@ -26,9 +26,13 @@ namespace Prelims_Cipher_Me
             }
             else
             {
-                Console.WriteLine("Machine Mode Set.");
-                Console.ReadKey();
-                DecryptMe();
+                ReadOutputFile();
+                if (File.Exists("eMessage.txt"))
+                {
+                    Console.WriteLine("Machine Mode Set.");
+                    Console.ReadKey();
+                    DecryptMe();
+                }
             }
         }
         static void EncryptMe()
@@ -51,7 +55,7 @@ namespace Prelims_Cipher_Me
         static void DecryptMe()
         {
             Console.Clear();
-            Console.Write("Enter your desired key: ");
+            Console.Write("Enter the key for your message: ");
             string key = Console.ReadLine();
             Console.WriteLine("Cypher has been set.");
             Console.ReadKey();
@@ -111,15 +115,7 @@ namespace Prelims_Cipher_Me
                     eMessage += message[i];
                 }
             }
-
-            try
-            {
-                WriteOutputFile(eMessage);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("File couldn't be accessed due to the following error: " + ex.Message);
-            }
+            WriteOutputFile(eMessage);
         }
         static void DecryptMyMessage(string key)
         {
@@ -143,30 +139,23 @@ namespace Prelims_Cipher_Me
                 cPhabet.Add(aPhabet[i]);
             }
 
-            try
-            {
-                ReadOutputFile();
-                string DecryptedMessage = "";
-                for (int i = 0; i < _mesFromTXT.Length; i++)
+            ReadOutputFile();
+            string DecryptedMessage = "";
+            for (int i = 0; i < _mesFromTXT.Length; i++) 
+            { 
+                if (cPhabet.Contains(_mesFromTXT[i]))
                 {
-                    if (cPhabet.Contains(_mesFromTXT[i]))
-                    {
-                        int index = cPhabet.IndexOf(_mesFromTXT[i]) + 65;
-                        DecryptedMessage += (char)index;
-                    }
-                    else
-                    {
-                        DecryptedMessage += _mesFromTXT[i];
-                    }
+                    int index = cPhabet.IndexOf(_mesFromTXT[i]) + 65;
+                    DecryptedMessage += (char)index;
                 }
-                Console.WriteLine("The decrypted message is: ");
-                Console.WriteLine(DecryptedMessage);
-                Console.ReadKey();
+                else
+                {
+                    DecryptedMessage += _mesFromTXT[i];
+                }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine("File couldn't be accessed due to the following error: " + ex.Message);
-            }
+            Console.WriteLine("The decrypted message is: ");
+            Console.WriteLine(DecryptedMessage);
+            Console.ReadKey();
         }
         static void WriteOutputFile(string eMessage)
         {
