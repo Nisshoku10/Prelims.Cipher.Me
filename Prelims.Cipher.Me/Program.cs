@@ -139,7 +139,6 @@ namespace Prelims_Cipher_Me
                 cPhabet.Add(aPhabet[i]);
             }
 
-            ReadOutputFile();
             string DecryptedMessage = "";
             for (int i = 0; i < _mesFromTXT.Length; i++) 
             { 
