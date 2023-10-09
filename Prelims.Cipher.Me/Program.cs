@@ -148,6 +148,10 @@ namespace Prelims_Cipher_Me
                     int index = cPhabet.IndexOf(_mesFromTXT[i]) + 65;
                     DecryptedMessage += (char)index;
                 }
+                else
+                {
+                    DecryptedMessage += _mesFromTXT[i];
+                }
             }
             Console.WriteLine("The decrypted message is: ");
             Console.WriteLine(DecryptedMessage);
